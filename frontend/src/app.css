@@ -8,12 +8,29 @@
   --color-text: #0f172a;
   --color-text-light: #64748b;
   --color-white: #ffffff;
+  
+  --font-sans: "Geist", sans-serif;
+  --font-geist: "Geist", sans-serif;
+  --font-nunito: "Nunito Sans", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-text);
-  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 /* Ensure no shadows and strictly flat UI */
