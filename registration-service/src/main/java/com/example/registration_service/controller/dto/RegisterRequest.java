@@ -5,21 +5,23 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 public class RegisterRequest {
-    @NotBlank
-    @Size(min = 3, max = 50)
+    @NotBlank(message = "Username cannot be blank")
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Username must only contain alphanumeric characters")
     private String username;
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "Email cannot be blank")
+    @Email(message = "Email must be a valid format")
     private String email;
 
-    @NotBlank
-    @Size(min = 6, max = 50)
+    @NotBlank(message = "Password cannot be blank")
+    @Size(min = 4, max = 50, message = "Password must be at least 4 characters")
     private String password;
 
-    @NotNull
+    @NotNull(message = "Role is required")
     private Role role;
 
     // Getters and Setters

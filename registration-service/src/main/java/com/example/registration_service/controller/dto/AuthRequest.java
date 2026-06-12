@@ -3,10 +3,10 @@ package com.example.registration_service.controller.dto;
 import jakarta.validation.constraints.NotBlank;
 
 public class AuthRequest {
-    @NotBlank
+    @NotBlank(message = "Username cannot be blank")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "Password cannot be blank")
     private String password;
 
     // Getters and Setters
