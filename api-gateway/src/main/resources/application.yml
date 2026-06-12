@@ -10,7 +10,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "*" # Allow the SvelteKit frontend to connect
+            allowedOrigins: "http://localhost:5173" # Specific to the SvelteKit frontend
             allowedMethods:
               - GET
               - POST
