@@ -22,7 +22,9 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager, KafkaTemplate<String, Object> kafkaTemplate) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       JwtService jwtService, AuthenticationManager authenticationManager,
+                       KafkaTemplate<String, Object> kafkaTemplate) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -57,6 +59,7 @@ public class AuthService {
         );
         kafkaTemplate.send("user-registered-topic", user.getId().toString(), event);
 
+        // Generate token with userId + role embedded as custom claims
         var jwtToken = jwtService.generateToken(user);
         return new AuthResponse(jwtToken);
     }
@@ -72,6 +75,7 @@ public class AuthService {
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
 
+        // Generate token with userId + role embedded as custom claims
         var jwtToken = jwtService.generateToken(user);
         return new AuthResponse(jwtToken);
     }

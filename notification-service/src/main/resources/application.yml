@@ -7,16 +7,16 @@ spring:
 
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/notification_db
-    username: postgres
-    password: password
+    username: sump_admin
+    password: sump_password
     pool:
       initial-size: 5
       max-size: 20
 
   datasource:
     url: jdbc:postgresql://localhost:5432/notification_db
-    username: postgres
-    password: password
+    username: sump_admin
+    password: sump_password
 
   flyway:
     enabled: true
@@ -32,3 +32,6 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
+
+jwt:
+  secret: Y2FjNjc3MjU1Yjk1NDU0MmZhMTFiZDRmOGY3NGI1YzdiMDU4YTNlOGIyYzBiYTNkYTMxMDcyYmEyZTMyZDRhZA==

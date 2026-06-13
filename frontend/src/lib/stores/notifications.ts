@@ -9,15 +9,20 @@ export type Notification = {
 };
 
 function createNotificationStore() {
-  const { subscribe, update } = writable<Notification[]>([]);
+  const { subscribe, set, update } = writable<Notification[]>([]);
   let socket: WebSocket | null = null;
 
   return {
     subscribe,
-    connect: (userId: string) => {
+
+    /**
+     * Connect to the WebSocket using the JWT token for authentication.
+     * The server validates the token during the handshake.
+     */
+    connect: (token: string) => {
       if (socket) return;
-      socket = new WebSocket(`ws://localhost:8080/ws/notifications?userId=${userId}`);
-      
+      socket = new WebSocket(`ws://localhost:8080/ws/notifications?token=${token}`);
+
       socket.onmessage = (event) => {
         try {
           const notification: Notification = JSON.parse(event.data);
@@ -29,18 +34,31 @@ function createNotificationStore() {
 
       socket.onclose = () => {
         socket = null;
-        // Optionally implement reconnect logic
       };
     },
+
+    /**
+     * Loads historical notifications fetched from the REST endpoint
+     * into the store (without duplicating ones already received via WS).
+     */
+    loadHistorical: (historical: Notification[]) => {
+      update(current => {
+        const existingIds = new Set(current.map(n => n.id));
+        const newOnes = historical.filter(n => !existingIds.has(n.id));
+        return [...current, ...newOnes];
+      });
+    },
+
     disconnect: () => {
       if (socket) {
         socket.close();
         socket = null;
       }
-      update(() => []);
+      set([]);
     },
+
     markAsRead: (id: string) => {
-      update(notifications => 
+      update(notifications =>
         notifications.map(n => n.id === id ? { ...n, isRead: true } : n)
       );
     }

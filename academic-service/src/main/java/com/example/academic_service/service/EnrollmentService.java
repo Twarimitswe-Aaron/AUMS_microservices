@@ -5,6 +5,7 @@ import com.example.academic_service.domain.event.StudentEnrolledEvent;
 import com.example.academic_service.domain.model.Enrollment;
 import com.example.academic_service.domain.repository.CourseRepository;
 import com.example.academic_service.domain.repository.EnrollmentRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ public class EnrollmentService {
     }
 
     @Transactional
+    @CacheEvict(value = "courses", allEntries = true)
     public String enrollStudent(EnrollRequest request) {
         if (enrollmentRepository.existsByStudentIdAndCourseId(request.getStudentId(), request.getCourseId())) {
             throw new IllegalArgumentException("Student is already enrolled in this course");

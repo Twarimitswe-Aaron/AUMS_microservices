@@ -1,4 +1,4 @@
-package com.example.academic_service.service;
+package com.example.notification_service.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -9,8 +9,14 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 import java.util.function.Function;
 
+/**
+ * Stateless JWT validator for the notification-service.
+ * This service ONLY validates and reads tokens — it never creates them.
+ * The secret must match the one in registration-service.
+ */
 @Service
 public class JwtService {
 
@@ -21,25 +27,22 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String extractUserId(String token) {
-        return extractClaim(token, claims -> claims.get("userId", String.class));
+    public UUID extractUserId(String token) {
+        String id = extractClaim(token, claims -> claims.get("userId", String.class));
+        return id != null ? UUID.fromString(id) : null;
     }
 
-    public String extractRole(String token) {
-        return extractClaim(token, claims -> claims.get("role", String.class));
+    public boolean isTokenValid(String token) {
+        try {
+            return !extractExpiration(token).before(new Date());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
-    }
-
-    public boolean isTokenValid(String token) {
-        return !isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
     }
 
     private Date extractExpiration(String token) {

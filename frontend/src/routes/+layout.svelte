@@ -31,7 +31,7 @@
     <h1 class="font-bold text-xl tracking-wide">SUMP Platform</h1>
     <nav>
       {#if $auth.isAuthenticated}
-        <button onclick={() => auth.logout()} class="px-4 py-2 bg-white text-[#000080] font-semibold rounded-sm hover:opacity-90 transition-opacity">
+        <button onclick={async () => await auth.logout()} class="px-4 py-2 bg-white text-[#000080] font-semibold rounded-sm hover:opacity-90 transition-opacity">
           Logout
         </button>
       {:else}

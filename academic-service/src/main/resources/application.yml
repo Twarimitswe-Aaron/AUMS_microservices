@@ -7,8 +7,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/academic_db
-    username: postgres
-    password: password
+    username: sump_admin
+    password: sump_password
     driver-class-name: org.postgresql.Driver
 
   jpa:

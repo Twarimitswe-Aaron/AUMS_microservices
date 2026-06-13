@@ -4,10 +4,11 @@
   import Toast from '$lib/components/Toast.svelte';
   import { onMount, onDestroy } from 'svelte';
 
-  // We need the user's ID to connect to WebSockets.
-  // In a real app, this comes from decoding the JWT.
-  // For simplicity, we'll fetch a dummy or parse the JWT manually.
-  function parseJwt(token: string) {
+  /**
+   * Decodes a JWT payload without verification (verification is done server-side).
+   * Used only to extract display data like userId and role.
+   */
+  function parseJwt(token: string): Record<string, string> | null {
     try {
       return JSON.parse(atob(token.split('.')[1]));
     } catch (e) {
@@ -18,25 +19,33 @@
   let courses: any[] = $state([]);
   let loading = $state(true);
   let error = $state('');
-  
-  let user = $derived($auth.token ? parseJwt($auth.token) : null);
-  // Assume the JWT subject (username) is used, but wait: the backend expects UUID.
-  // Actually, our AuthService.register() returns a token with `userId` claim!
-  // Wait, JwtService doesn't add custom claims by default. The Academic Service expects the UUID in EnrollRequest.
-  // Let's assume the user has to supply their ID. The backend would extract it.
-  // Our backend /enroll accepts { studentId, courseId }.
+
+  // Extract userId and role from the decoded JWT — no hardcoded values
+  let jwtPayload = $derived($auth.token ? parseJwt($auth.token) : null);
+  let currentUserId = $derived(jwtPayload?.userId ?? null);
+  let currentRole = $derived(jwtPayload?.role ?? null);
 
   onMount(async () => {
-    if (!$auth.isAuthenticated) {
+    if (!$auth.isAuthenticated || !currentUserId) {
       window.location.href = '/login';
       return;
     }
 
-    // Connect WebSocket using the subject or a placeholder.
-    // In our backend, user ID is needed. Since we only have the JWT, let's use a dummy ID 
-    // or just pass a random UUID for testing the UI.
-    const testUserId = '123e4567-e89b-12d3-a456-426614174000'; // Replace with real ID from JWT in prod
-    notifications.connect(testUserId);
+    // Connect WebSocket using the JWT token — server validates it during handshake
+    notifications.connect($auth.token!);
+
+    // Load historical notifications from the REST endpoint
+    try {
+      const histRes = await fetch('http://localhost:8080/api/v1/notifications', {
+        headers: { 'Authorization': `Bearer ${$auth.token}` }
+      });
+      if (histRes.ok) {
+        const historical = await histRes.json();
+        notifications.loadHistorical(historical);
+      }
+    } catch {
+      // Non-critical: live WS will still deliver new notifications
+    }
 
     try {
       const res = await fetch('http://localhost:8080/api/v1/academic/courses', {
@@ -56,21 +65,29 @@
   });
 
   async function enroll(courseId: string) {
-    const testUserId = '123e4567-e89b-12d3-a456-426614174000'; // Match above
+    if (!currentUserId) {
+      alert('Session expired. Please log in again.');
+      return;
+    }
     try {
       const res = await fetch('http://localhost:8080/api/v1/academic/enroll', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${$auth.token}`
         },
-        body: JSON.stringify({ studentId: testUserId, courseId })
+        body: JSON.stringify({ studentId: currentUserId, courseId })
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.message || 'Failed to enroll');
       }
-      alert('Successfully requested enrollment!');
+      // Refresh courses to get updated enrollment count
+      const refreshed = await fetch('http://localhost:8080/api/v1/academic/courses', {
+        headers: { 'Authorization': `Bearer ${$auth.token}` }
+      });
+      if (refreshed.ok) courses = await refreshed.json();
+      alert('Successfully enrolled!');
     } catch (err: any) {
       alert(err.message);
     }
@@ -80,7 +97,12 @@
 <Toast />
 
 <div class="max-w-6xl mx-auto mt-8">
-  <h2 class="text-3xl font-bold text-[#000080] mb-8 border-b-2 border-[#000080] pb-2">Course Catalog</h2>
+  <div class="flex justify-between items-center mb-8 border-b-2 border-[#000080] pb-2">
+    <h2 class="text-3xl font-bold text-[#000080]">Course Catalog</h2>
+    {#if currentRole}
+      <span class="bg-[#000080] text-white text-sm font-bold px-3 py-1 rounded-sm">{currentRole}</span>
+    {/if}
+  </div>
 
   {#if loading}
     <p class="text-xl text-gray-500 font-semibold">Loading courses from Redis...</p>
@@ -99,7 +121,7 @@
               Capacity: {course.currentEnrollment} / {course.capacity}
             </p>
           </div>
-          <button 
+          <button
             onclick={() => enroll(course.id)}
             disabled={course.currentEnrollment >= course.capacity}
             class="w-full py-2 bg-white border-2 border-[#000080] text-[#000080] font-bold rounded-sm hover:bg-[#000080] hover:text-white disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-[#000080] transition-colors"
