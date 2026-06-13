@@ -25,18 +25,18 @@
   });
 </script>
 
-<div class="min-h-screen bg-white text-[#0f172a]">
+<div class="min-h-screen bg-white text-text">
   <!-- Simple Top Bar -->
-  <header class="bg-[#000080] text-white p-4 flex justify-between items-center rounded-sm mx-2 mt-2">
+  <header class="bg-primary text-white p-4 flex justify-between items-center rounded-sm mx-2 mt-2">
     <h1 class="font-bold text-xl tracking-wide">SUMP Platform</h1>
     <nav>
       {#if $auth.isAuthenticated}
-        <button onclick={async () => await auth.logout()} class="px-4 py-2 bg-white text-[#000080] font-semibold rounded-sm hover:opacity-90 transition-opacity">
+        <button onclick={async () => await auth.logout()} class="px-4 py-2 bg-white text-primary font-semibold rounded-sm hover:opacity-90 transition-opacity">
           Logout
         </button>
       {:else}
         <a href="/login" class="mr-4 text-white hover:underline">Login</a>
-        <a href="/register" class="px-4 py-2 bg-white text-[#000080] font-semibold rounded-sm hover:opacity-90 transition-opacity">Register</a>
+        <a href="/register" class="px-4 py-2 bg-white text-primary font-semibold rounded-sm hover:opacity-90 transition-opacity">Register</a>
       {/if}
     </nav>
   </header>

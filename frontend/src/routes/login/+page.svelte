@@ -53,8 +53,8 @@
 </script>
 
 <div class="flex items-center justify-center min-h-[80vh]">
-  <div class="w-full max-w-md p-8 bg-[#f8fafc] border border-[#000080] rounded-sm">
-    <h2 class="text-3xl font-bold text-[#000080] mb-6 text-center">Login</h2>
+  <div class="w-full max-w-md p-8 bg-surface border border-primary rounded-sm">
+    <h2 class="text-3xl font-bold text-primary mb-6 text-center">Login</h2>
     
     {#if error}
       <div class="bg-red-100 text-red-700 p-3 mb-4 rounded-sm font-semibold">{error}</div>
@@ -68,7 +68,7 @@
         </div>
       {:else}
         <div>
-          <label for="username" class="block font-semibold mb-1 text-[#000080]">Username</label>
+          <label for="username" class="block font-semibold mb-1 text-primary">Username</label>
           <input 
             id="username" 
             type="text" 
@@ -80,7 +80,7 @@
         </div>
         
         <div>
-          <label for="password" class="block font-semibold mb-1 text-[#000080]">Password</label>
+          <label for="password" class="block font-semibold mb-1 text-primary">Password</label>
           <input 
             id="password" 
             type="password" 
@@ -95,7 +95,7 @@
       <button 
         type="submit" 
         disabled={loading || !isFormValid}
-        class="w-full py-3 mt-4 bg-[#000080] text-white font-bold rounded-sm hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+        class="w-full py-3 mt-4 bg-primary text-white font-bold rounded-sm hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {#if loading}
           <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -107,7 +107,7 @@
     </form>
     
     <p class="mt-6 text-center text-sm">
-      Don't have an account? <a href="/register" class="text-[#000080] font-bold hover:underline">Register here</a>
+      Don't have an account? <a href="/register" class="text-primary font-bold hover:underline">Register here</a>
     </p>
   </div>
 </div>

@@ -97,10 +97,10 @@
 <Toast />
 
 <div class="max-w-6xl mx-auto mt-8">
-  <div class="flex justify-between items-center mb-8 border-b-2 border-[#000080] pb-2">
-    <h2 class="text-3xl font-bold text-[#000080]">Course Catalog</h2>
+  <div class="flex justify-between items-center mb-8 border-b-2 border-primary pb-2">
+    <h2 class="text-3xl font-bold text-primary">Course Catalog</h2>
     {#if currentRole}
-      <span class="bg-[#000080] text-white text-sm font-bold px-3 py-1 rounded-sm">{currentRole}</span>
+      <span class="bg-primary text-white text-sm font-bold px-3 py-1 rounded-sm">{currentRole}</span>
     {/if}
   </div>
 
@@ -111,11 +111,11 @@
   {:else}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {#each courses as course}
-        <div class="bg-[#f8fafc] border border-[#000080] rounded-sm p-6 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-200">
+        <div class="bg-surface border border-primary rounded-sm p-6 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-200">
           <div>
             <div class="flex justify-between items-start mb-2">
-              <h3 class="text-xl font-bold text-[#000080]">{course.title}</h3>
-              <span class="bg-[#000080] text-white text-xs font-bold px-2 py-1 rounded-sm">{course.code}</span>
+              <h3 class="text-xl font-bold text-primary">{course.title}</h3>
+              <span class="bg-primary text-white text-xs font-bold px-2 py-1 rounded-sm">{course.code}</span>
             </div>
             <p class="text-gray-700 mb-4 font-semibold">
               Capacity: {course.currentEnrollment} / {course.capacity}
@@ -124,7 +124,7 @@
           <button
             onclick={() => enroll(course.id)}
             disabled={course.currentEnrollment >= course.capacity}
-            class="w-full py-2 bg-white border-2 border-[#000080] text-[#000080] font-bold rounded-sm hover:bg-[#000080] hover:text-white disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-[#000080] transition-colors"
+            class="w-full py-2 bg-white border-2 border-primary text-primary font-bold rounded-sm hover:bg-primary hover:text-white disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-primary transition-colors"
           >
             {course.currentEnrollment >= course.capacity ? 'Full' : 'Enroll'}
           </button>

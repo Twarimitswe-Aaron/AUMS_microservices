@@ -11,7 +11,7 @@
     <div 
       in:fly={{ y: 50, duration: 300 }} 
       out:fade={{ duration: 200 }}
-      class="bg-[#000080] text-white p-4 rounded-sm border-l-4 border-blue-400 min-w-[300px] flex justify-between items-start"
+      class="bg-primary text-white p-4 rounded-sm border-l-4 border-blue-400 min-w-[300px] flex justify-between items-start"
     >
       <div>
         <h4 class="font-bold text-sm mb-1">New Notification</h4>
